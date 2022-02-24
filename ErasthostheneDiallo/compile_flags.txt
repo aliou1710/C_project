@@ -1,0 +1,2 @@
+-ID:\Cours bloc MA1\Algorithmique structure\codes_ecrits\code_ecrit_par_moi\code_ecrit_par_moi\ErasthostheneDiallo
+-ID:\Cours bloc MA1\Algorithmique structure\codes_ecrits\code_ecrit_par_moi\code_ecrit_par_moi\InOut\src

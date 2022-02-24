@@ -1,0 +1,11 @@
+.codelite/
+Makefile
+build-Debug/
+code_ecrit_par_moi.workspace
+first_project/
+project1/
+code_ecrit_par_moi/*
+ErasthostheneDiallo/*.mk
+ErasthostheneDiallo/*.txt
+ErasthostheneDiallo/*.project
+
