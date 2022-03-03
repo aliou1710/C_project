@@ -14,7 +14,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=aliou
-Date                   :=24/02/2022
+Date                   :=03/03/2022
 CodeLitePath           :="D:/Cours bloc MA1/Algorithmique structure/cours/CodeLite"
 LinkerName             :=gcc
 SharedObjectLinkerName :=gcc -shared -fPIC
@@ -38,7 +38,7 @@ PCHCompileFlags        :=
 RcCmpOptions           := 
 RcCompilerName         :=windres
 LinkOptions            :=  
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch)../InOut/src $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
 Libs                   := $(LibrarySwitch)InOut 
@@ -53,7 +53,7 @@ AR       := ar rcus
 CXX      := gcc
 CC       := gcc
 CXXFLAGS :=  -g -O0 -Wall $(Preprocessors)
-CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
+CFLAGS   := -std=c90  -pedantic-errors -Wall -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
 AS       := as
 
