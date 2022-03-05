@@ -12,6 +12,9 @@
 #include <time.h>
 #include <math.h>
 #include "inout.h"
+/*librairie ajoutée*/
+#include <inttypes.h>
+
 
 /* typedef short int bool; */
 typedef unsigned char bool;
@@ -30,7 +33,7 @@ struct TListPrimes {
 	int  maximum; 
 	/*pointeur <=> tableau des nombres premier*/
     int * pPrimes;
-	/*tableau */
+	/* */
     int cPrimes; 
 };
 typedef struct TListPrimes TListPrimes;
@@ -84,53 +87,68 @@ void InitializeTListPrimes(TListPrimes *listPrime){
 	
 void Erathostenes(TListPrimes *listPrime){
 	/*creer un tableau  provisoire qui permet d'allouer de memoire	*/
-	uint32 *tab= calloc((((listPrime->maximum-1)/32)+1),sizeof(uint32));
+	uint32 *tab= calloc(((((listPrime->maximum+1)-1)/32)+1),sizeof(uint32));
 	
 	/*variable qu'on va utiliser */
-	int  j ;
-	int i;
-	int k;
+/* on a une erreur lorsqu'on atteint K = j * j => 46350*46350 > sqrt(MAX)
+sqrt(MAX) = 46340.95
+ * N_max = 2^31-1
+ * donc lorsqu'on arrive à cette valeur , on fait le systeme recommence
+ * on dirait c'est une boucle , et il commence par un nombre negatif=  -MAX (donc devient 111111111111111111111111) negatif
+46400*46400 = N_max + 1
+c'est pour cela j'utiliser des int de 64 bit  car la sqrt(1,84467441E19) est > MAX*MAX donc on arrive à stocker
+*/
+	
+	
+	int64_t j ;
+	int64_t i;
+	int64_t k;
 	int m;
 	int count;
-
+	/*printf("size k = %d \n",sizeof(k));=>affichera 8 octet*/
 	/*(((listPrime->maximum-1)/32)+1) correspond au nombre de case entier de 32 bits*/
-	for(i = 0 ; i< (((listPrime->maximum-1)/32)+1);i++){
-		tab[i] = MAX_UINT32; 
+	for(i = 0 ; i<=((((listPrime->maximum)-1)/32)+1);i++){
+		tab[i] = MAX_UINT32;
+		
 		/*la valeur MAX_UINT32 est une valeur qui correspond  au 1111 1111 1111 1111 1111 1111 1111 1111 */
 		}
 		
 	/* je mets le bit 0 -> 0 et aussi 1 ->0*/
-	unsetbitarray(tab,0);
-	unsetbitarray(tab,1);
+	/*unsetbitarray(tab,0);
+	unsetbitarray(tab,1);*/
 	
 	
-	for( j = 2 ; j< (listPrime->maximum);j++){
-		
+	/*printf(" maximum = %d \n",listPrime->maximum);*/
+	for( j = 2 ; j<= listPrime->maximum;j++){
+	
+
 		/**** si issetbitarray ==1 cvd vrai sinon ==0 cvd faux ****/
 		if(issetbitarray(tab,j)){
+			
 			/*par pas de i: on enleve touts les multiples d'une valeur*/
 			listPrime->cPrimes +=1;
-			for(k = j*j ; k<(listPrime->maximum);k+=j){
+			
+			for(k = j*j ; k<=listPrime->maximum;k+=j){
 				/*unset met à faux => met à 0*/
 				/*je mets tous les multiples à 0*/
-						
+				
 				unsetbitarray(tab,k);
-			}
+				
+		}
 		}
 }
 	 count =0;
 	listPrime->pPrimes =malloc(listPrime->cPrimes*sizeof(int)) ;
 	
 	/*** je mets tous les nombres premiers dans le tableaux pPrimes ***/
-	for(i = 0 ; i< (listPrime->maximum);i++){
+	for(i = 0 ; i<= (listPrime->maximum);i++){
 		  
 		if(issetbitarray(tab,i)){
-			
 			listPrime->pPrimes[count]= i;
 			count ++;
 			
 			}
-		}
+		}		
 	free(tab);
 }
 void ShowPrimes2(TListPrimes * listPrime){
