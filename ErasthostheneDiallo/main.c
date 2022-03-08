@@ -52,8 +52,6 @@ int main(int argc, char* argv[]) {
         InitializeTListPrimes(&listPrimes);
         listPrimes.maximum = ReadIntLimited("\nVotre naturel maximum ? ", 0, MAX);
 		
-		
-        /*InitializeTListPrimes(&listPrimes);*/
 		ct1 = clock();
         Erathostenes(&listPrimes);
         ct2 = clock();
@@ -92,32 +90,32 @@ void Erathostenes(TListPrimes* listPrime){
 	uint32 *ui = calloc(((listPrime->maximum-1)/32)+1 , sizeof(uint32));
 	
 		/*variable qu'on va utiliser */
-/* on a une erreur lorsqu'on atteint K = j * j => 46350*46350 > sqrt(MAX)
-sqrt(MAX) = 46340.95
- * N_max = 2^31-1
- * donc lorsqu'on arrive à cette valeur , on fait le systeme recommence
- * on dirait c'est une boucle , et il commence par un nombre negatif=  -MAX (donc devient 111111111111111111111111) negatif
-46400*46400 = N_max + 1
-c'est pour cela j'utiliser des int de 64 bit  car la sqrt(1,84467441E19) est > MAX*MAX donc on arrive à stocker
-*/
-	/*int64_t  i;*/
+	int64_t  i;
 	int64_t  j;
 	int64_t  k;
 	int64_t  m;
+	int64_t n;
 	int count;
 	int racine;
-	/*On met dans chaque cas d'entier de 32 bits , la valeur MAX_UINT32 qui correspond à des 1 partout*/
-	/*for(i = 0; i<=((listPrime->maximum-1)/32)+1; i++ ){
-		ui[i]= MAX_UINT32;
-		}*/
+	
 	
 	/*on met le bit 0 à 1 et le bit de 1 à 1*/
 	setbitarray(ui,0);
 	setbitarray(ui,1);
 	
+	/*on met tout les multiples de 2 à 1 */
+		n=2;
+		for(k = n*n; k<=listPrime->maximum; k+=n ){
+				/*on met le bit k à 1*/
+				setbitarray(ui, k);
+				}
+		/*2 est un nombre premier*/
+		listPrime->cPrimes++;
+	
 	
 	racine= sqrt(listPrime->maximum);
-	for(j = 2; j<=listPrime->maximum; j++ ){
+	
+	for(j = 3; j<=listPrime->maximum; j+=2 ){
 		
 		if(!(issetbitarray(ui, j))){
 			
@@ -126,16 +124,16 @@ c'est pour cela j'utiliser des int de 64 bit  car la sqrt(1,84467441E19) est > M
 			/*si on depasse la valeur de la racine , ça ne sert à rien de calculer ces multiples*/
 			if(j<=racine){
 			/*On met les bits  multiples de j  à 0*/
-			/*for(k=j*j; k<=listPrime->maximum; k+=2*j ){*/
-			for(k=j*j; k<=listPrime->maximum; k+=j ){
+			
+			for(i=j*j; i<=listPrime->maximum; i+=(2*j) ){
 				
 				
 				/*on met le bit k à 1*/
-				setbitarray(ui, k);
+				setbitarray(ui, i);
 				
 				}
 		}
-		}
+	  }
 	}
 	listPrime->pPrimes= malloc(listPrime->cPrimes*sizeof(int));
 	 count= 0 ;
@@ -169,7 +167,7 @@ void ShowPrimes2(TListPrimes* listPrime){
 		
 		}else if(listPrime->cPrimes > 20){
 			
-			for( i =0 ; i< 10 ;i++){
+		for( i =0 ; i< 10 ;i++){
 		
 			
 		printf("	Nombre premier n     %d :         %d \n", (i+1),listPrime->pPrimes[i]);
