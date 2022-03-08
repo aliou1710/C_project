@@ -39,10 +39,10 @@ struct TListPrimes {
 typedef struct TListPrimes TListPrimes;
 /*  TODO ... */
 
-void InitializeTListPrimes(TListPrimes *listPrime);
-void Erathostenes(TListPrimes * listPrime);
-void ShowPrimes2(TListPrimes * listPrime);
-void DestroyTListPrimes(TListPrimes * listPrime);
+void InitializeTListPrimes(TListPrimes* listPrime);
+void Erathostenes(TListPrimes* listPrime);
+void ShowPrimes2(TListPrimes* listPrime);
+void DestroyTListPrimes(TListPrimes* listPrime);
 
 int main(int argc, char* argv[]) {
     clock_t ct1, ct2;
@@ -74,7 +74,7 @@ typedef unsigned int uint32;
 
 /*  TODO ... */
 
-void InitializeTListPrimes(TListPrimes *listPrime){
+void InitializeTListPrimes(TListPrimes* listPrime){
 	
 	listPrime->maximum = 0 ;
 	/*cprimes est un entier, et correspond au nombre de nombre premier qu'on aura */
@@ -85,11 +85,13 @@ void InitializeTListPrimes(TListPrimes *listPrime){
 	}
 	
 	
-void Erathostenes(TListPrimes *listPrime){
-	/*creer un tableau  provisoire qui permet d'allouer de memoire	*/
-	uint32 *tab= calloc(((((listPrime->maximum+1)-1)/32)+1),sizeof(uint32));
+void Erathostenes(TListPrimes* listPrime){
+	/*LOGIQUE INVERSE*/
+		
+	/*on enumere le nombre de case et on met chaque bit à 0*/
+	uint32 *ui = calloc(((listPrime->maximum-1)/32)+1 , sizeof(uint32));
 	
-	/*variable qu'on va utiliser */
+		/*variable qu'on va utiliser */
 /* on a une erreur lorsqu'on atteint K = j * j => 46350*46350 > sqrt(MAX)
 sqrt(MAX) = 46340.95
  * N_max = 2^31-1
@@ -98,60 +100,60 @@ sqrt(MAX) = 46340.95
 46400*46400 = N_max + 1
 c'est pour cela j'utiliser des int de 64 bit  car la sqrt(1,84467441E19) est > MAX*MAX donc on arrive à stocker
 */
-	
-	
-	int64_t j ;
-	int64_t i;
-	int64_t k;
-	int m;
+	/*int64_t  i;*/
+	int64_t  j;
+	int64_t  k;
+	int64_t  m;
 	int count;
-	/*printf("size k = %d \n",sizeof(k));=>affichera 8 octet*/
-	/*(((listPrime->maximum-1)/32)+1) correspond au nombre de case entier de 32 bits*/
-	for(i = 0 ; i<=((((listPrime->maximum)-1)/32)+1);i++){
-		tab[i] = MAX_UINT32;
+	int racine;
+	/*On met dans chaque cas d'entier de 32 bits , la valeur MAX_UINT32 qui correspond à des 1 partout*/
+	/*for(i = 0; i<=((listPrime->maximum-1)/32)+1; i++ ){
+		ui[i]= MAX_UINT32;
+		}*/
+	
+	/*on met le bit 0 à 1 et le bit de 1 à 1*/
+	setbitarray(ui,0);
+	setbitarray(ui,1);
+	
+	
+	racine= sqrt(listPrime->maximum);
+	for(j = 2; j<=listPrime->maximum; j++ ){
 		
-		/*la valeur MAX_UINT32 est une valeur qui correspond  au 1111 1111 1111 1111 1111 1111 1111 1111 */
-		}
-		
-	/* je mets le bit 0 -> 0 et aussi 1 ->0*/
-	/*unsetbitarray(tab,0);
-	unsetbitarray(tab,1);*/
-	
-	
-	/*printf(" maximum = %d \n",listPrime->maximum);*/
-	for( j = 2 ; j<= listPrime->maximum;j++){
-	
-
-		/**** si issetbitarray ==1 cvd vrai sinon ==0 cvd faux ****/
-		if(issetbitarray(tab,j)){
+		if(!(issetbitarray(ui, j))){
 			
-			/*par pas de i: on enleve touts les multiples d'une valeur*/
-			listPrime->cPrimes +=1;
-			
-			for(k = j*j ; k<=listPrime->maximum;k+=j){
-				/*unset met à faux => met à 0*/
-				/*je mets tous les multiples à 0*/
+			/*on incremente cprimes*/
+			listPrime->cPrimes++;
+			/*si on depasse la valeur de la racine , ça ne sert à rien de calculer ces multiples*/
+			if(j<=racine){
+			/*On met les bits  multiples de j  à 0*/
+			/*for(k=j*j; k<=listPrime->maximum; k+=2*j ){*/
+			for(k=j*j; k<=listPrime->maximum; k+=j ){
 				
-				unsetbitarray(tab,k);
 				
+				/*on met le bit k à 1*/
+				setbitarray(ui, k);
+				
+				}
 		}
 		}
-}
-	 count =0;
-	listPrime->pPrimes =malloc(listPrime->cPrimes*sizeof(int)) ;
-	
-	/*** je mets tous les nombres premiers dans le tableaux pPrimes ***/
-	for(i = 0 ; i<= (listPrime->maximum);i++){
-		  
-		if(issetbitarray(tab,i)){
-			listPrime->pPrimes[count]= i;
-			count ++;
+	}
+	listPrime->pPrimes= malloc(listPrime->cPrimes*sizeof(int));
+	 count= 0 ;
+	 
+	 /*On encode dans le tableau pPrimes, les bits qui sont à 1*/
+	for(m = 0;m <= listPrime->maximum; m++ ){
+		if(!(issetbitarray(ui, m))){
+		/*si le bit ==0 on met m dans le tableau*/
+			listPrime->pPrimes[count]=m;	
+			count++;
 			
-			}
-		}		
-	free(tab);
+		}
+	}
+	/*libere l'espace*/
+	free(ui);
+	
 }
-void ShowPrimes2(TListPrimes * listPrime){
+void ShowPrimes2(TListPrimes* listPrime){
 	int i;
 	
 	printf("Il y a %d nombre premiers inferieurs à %d: \n", listPrime->cPrimes,listPrime->maximum);
@@ -188,7 +190,7 @@ void ShowPrimes2(TListPrimes * listPrime){
 	
 	
 	}
-void DestroyTListPrimes(TListPrimes * listPrime){
+void DestroyTListPrimes(TListPrimes* listPrime){
 	
 	free(listPrime->pPrimes);
 	
